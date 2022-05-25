@@ -1,4 +1,5 @@
 
+/* fonction de création de fiche produit */
 function createItem(element) {
   let items = document.getElementById("items");
   let item = document.createElement("a");
@@ -20,6 +21,17 @@ function createItem(element) {
   items.appendChild(item);
 }
 
+/* Message d'erreur si la base de donnée ne répond pas */
+function erreur() {
+  let items = document.getElementById("items");
+  let divMessage = document.createElement("div");
+  items.appendChild(divMessage);
+  let message = document.createElement("p");
+  message.innerHTML = "La connexion à la base de donnée ne fonctionne pas. Merci d'attendre quelques minutes avant de recharger la page.";
+  divMessage.appendChild(message);
+}
+
+/* Appel API */
 fetch("http://localhost:3000/api/products/")
   .then(function (res) {
     if (res.ok) {
@@ -33,6 +45,6 @@ fetch("http://localhost:3000/api/products/")
   })
 
   .catch(function (err) {
-    console.error(err);
+    erreur();
   });
 
