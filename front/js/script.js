@@ -1,6 +1,6 @@
 
 /* fonction de création de fiche produit */
-function createItem(element) {
+const createItem = function (element) {
   let items = document.getElementById("items");
   let item = document.createElement("a");
   item.setAttribute("href", "./product.html?id=" + element._id);
@@ -22,7 +22,7 @@ function createItem(element) {
 }
 
 /* Message d'erreur si la base de donnée ne répond pas */
-function erreur() {
+const erreur = function () {
   let items = document.getElementById("items");
   let divMessage = document.createElement("div");
   items.appendChild(divMessage);
