@@ -3,15 +3,15 @@
 let params = new URL(document.location).searchParams;
 let id = params.get("id");
 let apiUrl = "http://localhost:3000/api/products/" + id;
-let cart = [];
+/* let cart = []; */
 
-let color;
-let quantity;
+let color = null;
+let quantity = null;
 
 
 /* Classe */
 
-class Produit {
+class Product {
   constructor(idProduct, colorProduct, quantityProduct) {
     this.id = idProduct;
     this.color = colorProduct;
@@ -86,6 +86,16 @@ function changeEventHandlerQuantity(event) {
   quantity = event.target.value;
 }
 
+/* Fonction d'affichage d'erreur si aucun choix n'est fait */
+
+function errorMessage(erreur) {
+  /* let conteneur = document.getElementsByClassName("item__content__settings__color");
+  let messageErreur = document.createElement("p");
+  conteneur.appendChild(messageErreur);
+  messageErreur.innerHTML = erreur; */
+  alert(erreur);
+}
+
 /* Fonction de vérification du choix de la couleur et de la quantité */
 
 function checkUserInput() {
@@ -98,70 +108,36 @@ function checkUserInput() {
   }
 }
 
-/* Fonction d'ajout au panier */
+/* Fonction de sauvegarde du panier dans le LocalStorage */
 
-function addToCart() {
-  checkUserInput();
-  let product = new Produit(id, color, quantity);
-    console.log(product);
-    cart.push(product);
-    console.log(cart);
-    let panier = JSON.stringify(cart);
-    /* console.log(panier); */
-    localStorage.setItem("cart", panier);
-    
-  /* if (getCart().id === id && getCart().color === color) {
-    console.log("Produit déjà dans le panier"); */
-/*     let updateCart = getCart();
-    updateCart.quantity++;
-    const panier = JSON.stringify(updateCart);
-    console.log(panier);
-    localStorage.setItem("cart", panier); */
-
- /*  } else {
-    let product = new Produit(id, color, quantity);
-    console.log(product);
-    cart.push(product);
-    console.log(cart);
-    let panier = JSON.stringify(cart);
-    /* console.log(panier); */
-   /* localStorage.setItem("cart", panier);
-    checkCart();
-  } */
+function saveCart(cart) {
+  localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-/*Fonction de test de l'écriture dans le LocalStorage */
-
-function checkCart() {
-  let userCartJson = localStorage.getItem("cart");
-  let userCartToCheck = JSON.parse(userCartJson);
-  for (let info of userCartToCheck) {
-    console.log("Resultat de la récupération du LocalStorage");
-    console.log(info);
-    console.log(info.id);
-  }
-}
-
-/* Fonction pour debug */
+/* Fonction de récupération du LocalStorage */
 
 function getCart() {
-  let userCartJson = localStorage.getItem("cart");
-  let userCartToCheck = JSON.parse(userCartJson);
-  return {
-    id: userCartToCheck[0].id,
-    color: userCartToCheck[0].color,
-    quantity: userCartToCheck[0].quantity,
+  let cart = localStorage.getItem("cart");
+  if (cart == null) {
+    return [];
+  } else {
+    return JSON.parse(cart);
   }
 }
 
-/* Fonction pour debug */
+/* Fonction d'ajout au panier */
 
-function errorMessage(erreur) {
-  /* let conteneur = document.getElementsByClassName("item__content__settings__color");
-  let messageErreur = document.createElement("p");
-  conteneur.appendChild(messageErreur);
-  messageErreur.innerHTML = erreur; */
-  console.log(erreur);
+function addCart() {
+  let cart = getCart();
+  let duplicateId = cart.find(element => element.id == id);
+  let duplicateColor = cart.find(element => element.color == color);
+  if ((duplicateId != undefined) && (duplicateColor != undefined)) {
+    duplicateId.quantity += quantity;
+  } else {
+    let product = new Product(id, color, quantity);
+    cart.push(product);
+  }
+  saveCart(cart);
 }
 
 /* Appel API */
@@ -195,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
 /* Ecoute du click sur le bouton */
 
 let button = document.getElementById("addToCart");
-button.addEventListener('click', addToCart);
+button.addEventListener('click', addCart);
 
 /* console.log(getCart()); */
 
@@ -207,3 +183,7 @@ if (typeof (Storage) !== "undefined") {
 } else {
   console.log("You're Browser don't support LocalStorage Javascript API.");
 }
+
+/* if (getCartCheck() !== null) {
+  cart.push(getCartCheck());
+} */
