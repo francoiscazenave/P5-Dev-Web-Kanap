@@ -27,7 +27,7 @@ const erreur = function () {
   let divMessage = document.createElement("div");
   items.appendChild(divMessage);
   let message = document.createElement("p");
-  message.innerHTML = "La connexion à la base de donnée ne fonctionne pas. Merci d'attendre quelques minutes avant de recharger la page.";
+  message.innerHTML = "La connexion à la base de donnée ne fonctionne pas.";
   divMessage.appendChild(message);
 }
 
