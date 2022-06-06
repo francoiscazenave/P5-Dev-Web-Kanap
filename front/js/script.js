@@ -47,4 +47,3 @@ fetch("http://localhost:3000/api/products/")
   .catch(function (err) {
     erreur();
   });
-

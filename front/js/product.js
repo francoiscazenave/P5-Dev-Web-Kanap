@@ -3,11 +3,9 @@
 let params = new URL(document.location).searchParams;
 let id = params.get("id");
 let apiUrl = "http://localhost:3000/api/products/" + id;
-/* let cart = []; */
 
 let color = null;
 let quantity = null;
-
 
 /* Classe */
 
