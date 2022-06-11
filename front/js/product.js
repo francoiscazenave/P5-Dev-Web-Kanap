@@ -130,7 +130,10 @@ function addCart() {
   let duplicateId = cart.find(element => element.id == id);
   let duplicateColor = cart.find(element => element.color == color);
   if ((duplicateId != undefined) && (duplicateColor != undefined)) {
-    duplicateId.quantity += quantity;
+    duplicateIdQuantity = parseInt(duplicateId.quantity, 10);
+    quantityNum = parseInt(quantity, 10);
+    duplicateIdQuantity += quantityNum;
+    duplicateId.quantity = duplicateIdQuantity;
   } else {
     let product = new Product(id, color, quantity);
     cart.push(product);
