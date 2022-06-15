@@ -1,11 +1,21 @@
 /* Variables */
 
-/* variable pour stocker le panier provenant du localStorage */
-
-let cart = JSON.parse(localStorage.getItem("cart"));
-
 /* Variable pour stocker le résultat de l'API */
-let products = null;
+let productsAPI = null;
+
+/* Classes */
+
+/* Classe de création d'un objet contact */
+
+class Contact {
+  constructor(firstName, name, adress, city, mail) {
+    this.firstName = firstName;
+    this.lastName = name;
+    this.address = adress;
+    this.city = city;
+    this.email = mail;
+  }
+}
 
 /* Fonction de récupération du panier */
 
@@ -17,13 +27,14 @@ function getCart() {
 /* Function de recherche dans l'API */
 
 function searchAPI(id) {
-  return products.find(product => product._id === id);
+  return productsAPI.find(product => product._id === id);
 }
 
 /* Fonction d'affichage du panier */
 
 function userCart() {
   /* Si le panier n'est pas vide afficher les produits */
+  let cart = getCart();
   if (cart !== null) {
     for (let item of cart) {
       let apiResult = searchAPI(item.id);
@@ -133,6 +144,7 @@ function ModifQuantityEvent() {
 /* Fonction de suppression d'un produit */
 
 function productDelete(product) {
+  let cart = getCart();
   cart = cart.filter(p => p.id != product.getAttribute("data-id"));
   localStorage.setItem("cart", JSON.stringify(cart));
 }
@@ -158,9 +170,13 @@ function DeleteEvent() {
 function calcQuantity() {
   let panier = getCart();
   let allProduct = 0;
-  for (let item of panier) {
-    itemQuantity = parseInt(item.quantity, 10);
-    allProduct += itemQuantity;
+  if (panier === null) {
+    allProduct = 0;
+  } else {
+    for (let item of panier) {
+      itemQuantity = parseInt(item.quantity, 10);
+      allProduct += itemQuantity;
+    }
   }
   return allProduct;
 }
@@ -177,10 +193,13 @@ function displayTotal() {
 function calcTotal() {
   let panier = getCart();
   let total = 0;
-
-  for (let item of panier) {
-    let foundProduct = searchAPI(item.id);
-    total += foundProduct.price * item.quantity;
+  if (panier === null) {
+    total = 0;
+  } else {
+    for (let item of panier) {
+      let foundProduct = searchAPI(item.id);
+      total += foundProduct.price * item.quantity;
+    }
   }
   return total;
 }
@@ -316,32 +335,6 @@ function getIdList() {
   return idList;
 }
 
-/* Fonction de création de l'objet envoyé a l'API */
-
-function order() {
-  let order = {
-    contact: {
-      firstName: getValue("firstName"),
-      lastName: getValue("lastName"),
-      address: getValue("address"),
-      city: getValue("city"),
-      email: getValue("email")
-    },
-    /* productID: getIdList(), */
-  };
-  return order;
-}
-
-function contact() {
-  return {
-    firstName: getValue("firstName"),
-    lastName: getValue("lastName"),
-    address: getValue("address"),
-    city: getValue("city"),
-    email: getValue("email")
-  }
-}
-
 /* Fonction d'écoute de l'événement sur le formulaire */
 
 function formListener() {
@@ -349,20 +342,22 @@ function formListener() {
   form[0].addEventListener("submit", function (e) {
     if (validFirstName() && validLastName() && validAddress() && validCity() && validEmail()) {
       e.preventDefault();
-      let orderInfo = order();
-      let orderId = getIdList();
-      let orderIds = {
-        productId : orderId
+      let contact = new Contact(getValue("firstName"), getValue("lastName"), getValue("address"), getValue("city"), getValue("email"));
+      let products = getIdList();
+      let combined = {
+        contact,
+        products
       }
-      console.log(orderInfo);
-      console.log(orderId);
+      /* let products = new Products(getIdList()); */
+      console.log(contact);
+      console.log(products);
       fetch("http://localhost:3000/api/products/order", {
         method: "POST",
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(orderInfo)
+        body: JSON.stringify(combined)
       })
         .then(function (response) {
           if (response.ok) {
@@ -370,31 +365,15 @@ function formListener() {
           }
         })
         .then(function (value) {
-          /* localStorage.clear() */
-          /* document.location.href = `./confirmation.html?commande=${value.orderId}`; */
-          console.log(value.orderId);
+          localStorage.clear()
+          document.location.href = `./confirmation.html?commande=${value.orderId}`;
+          /* console.log(value.orderId); */
         })
         .catch(function (err) {
           console.log(err.message);
         })
     }
-    /* let contact = new Contact(getValue("firstName"), getValue("lastName"), getValue("address"), getValue("city"), getValue("email")); */
-    /* window.location.href = "./confirmation.html"; */
   });
-}
-
-/* Classes */
-
-/* Classe de création d'un objet contact */
-
-class Contact {
-  constructor(firstName, name, adress, town, mail) {
-    this.firstName = firstName;
-    this.name = name;
-    this.adress = adress;
-    this.town = town;
-    this.mail = mail;
-  }
 }
 
 /* Appel API */
@@ -406,7 +385,7 @@ function main() {
       }
     })
     .then(function (value) {
-      return products = value;
+      return productsAPI = value;
     })
     .then(function () {
       userCart();
@@ -431,4 +410,3 @@ function main() {
 }
 
 main();
-/* formListener(); */
