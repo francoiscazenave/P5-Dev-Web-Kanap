@@ -43,7 +43,6 @@ fetch("http://localhost:3000/api/products/")
       createItem(tab);
     }
   })
-
   .catch(function (err) {
     erreur();
   });

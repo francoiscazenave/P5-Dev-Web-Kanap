@@ -1,6 +1,9 @@
 /* Variables */
 
+/* variable pour stocker le panier provenant du localStorage */
+
 let cart = JSON.parse(localStorage.getItem("cart"));
+
 /* Variable pour stocker le résultat de l'API */
 let products = null;
 
@@ -15,14 +18,6 @@ function getCart() {
 
 function searchAPI(id) {
   return products.find(product => product._id === id);
-}
-
-/* Fonction de recherche de prix par rapport à un id */
-
-function findPrice(id) {
-  if (products.find(product => product._id === id)) {
-    return products.price;
-  }
 }
 
 /* Fonction d'affichage du panier */
@@ -93,6 +88,7 @@ function userCart() {
       cartItemContentDeleteParagraphe.innerText = "Supprimer";
       cartItemContentDelete.appendChild(cartItemContentDeleteParagraphe);
     }
+    /* Si le panier est vide */
   } else {
     let section = document.getElementById("cart__items");
     let display = document.createElement("article");
@@ -185,9 +181,9 @@ function calcTotal() {
   for (let item of panier) {
     let foundProduct = searchAPI(item.id);
     total += foundProduct.price * item.quantity;
-    }
-    return total;
   }
+  return total;
+}
 
 /* Fonction de calcul du total des produits */
 
@@ -196,7 +192,185 @@ function displayPrice() {
   totalPrice.innerText = calcTotal();
 }
 
+/* Fonction pour récupérer la valeur des champs du formulaire */
+
+function getValue(id) {
+  return document.getElementById(id).value;
+}
+
+/* Fonction de validation du prénom */
+
+function validFirstName() {
+  const firstName = document.getElementById("firstName").value;
+  const nameRegEx = new RegExp("^[a-zA-Z\-]{3,15}$", "g");
+  let msgError = document.getElementById("firstNameErrorMsg");
+  if (!firstName) {
+    msgError.innerText = "Vous devez remplir votre prénom";
+    msgError.style.color = "red";
+    return false;
+  } else if (!nameRegEx.test(firstName)) {
+    msgError.innerText = "Ceci n'est pas un prénom valide";
+    msgError.style.color = "red";
+    return false;
+  } else {
+    msgError.innerText = "";
+    return true;
+  }
+}
+
+/* Fonction de validation du nom */
+
+function validLastName() {
+  const lastName = document.getElementById("lastName").value;
+  const nameRegEx = new RegExp("^[a-zA-Z\-]{2,25}$", "g");
+  let msgError = document.getElementById("lastNameErrorMsg");
+  if (!lastName) {
+    msgError.innerText = "Vous devez remplir votre nom";
+    msgError.style.color = "red";
+    return false;
+  } else if (!nameRegEx.test(lastName)) {
+    msgError.innerText = "Ceci n'est pas un nom valide";
+    msgError.style.color = "red";
+    return false;
+  } else {
+    msgError.innerText = "";
+    return true;
+  }
+}
+
+/* Fonction de validation de l'adresse */
+
+function validAddress() {
+  const address = document.getElementById("address").value;
+  const addressRegEx = new RegExp("^[a-zA-Z0-9\s ,.'-]{3,}$", "g");
+  let msgError = document.getElementById("addressErrorMsg");
+  if (!address) {
+    msgError.innerText = "Vous devez remplir votre adresse";
+    msgError.style.color = "red";
+    return false;
+  } else if (!addressRegEx.test(address)) {
+    msgError.innerText = "Ceci n'est pas une adresse valide";
+    msgError.style.color = "red";
+    return false;
+  } else {
+    msgError.innerText = "";
+    return true;
+  }
+}
+
+/* Fonction de validation de la ville */
+
+function validCity() {
+  const city = document.getElementById("city").value;
+  let cityRegEx = new RegExp("^[a-zA-Z\-]{2,}$", "g");
+  let msgError = document.getElementById("cityErrorMsg");
+  if (!city) {
+    msgError.innerText = "Vous devez remplir votre ville";
+    msgError.style.color = "red";
+    return false;
+  } else if (!cityRegEx.test(city)) {
+    msgError.innerText = "Ceci n'est pas un nom de ville valide";
+    msgError.style.color = "red";
+    return false;
+  } else {
+    msgError.innerText = "";
+    return true;
+  }
+}
+
+/* Fonction de validation d'adresse mail */
+
+function validEmail() {
+  const email = document.getElementById("email").value;
+  let emailRegEx = new RegExp("^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$", "g");
+  let msgError = document.getElementById("emailErrorMsg");
+  if (!email) {
+    msgError.innerText = "Vous devez remplir l'email";
+    msgError.style.color = "red";
+    return false;
+  } else if (!emailRegEx.test(email)) {
+    msgError.innerText = "Ceci n'est pas un mail valide";
+    msgError.style.color = "red";
+    return false;
+  } else {
+    msgError.innerText = "";
+    return true;
+  }
+}
+
+/* Fonction d'écoute des champs du formulaire */
+
+function formEvent(element, event) {
+  let elementListen = document.getElementById(element);
+  elementListen.addEventListener("input", event);
+}
+
+/* Fonction pour créer un tableau avec les id dans le panier */
+
+function getIdList() {
+  const cart = getCart();
+  let idList = [];
+  for (let item of cart) {
+    idList.push(item.id);
+  }
+  return idList;
+}
+
+/* Fonction de création de l'objet envoyé a l'API */
+
+function order() {
+  let order = {
+    contact: {
+      firstName: getValue("firstName"),
+      lastName: getValue("lastName"),
+      address: getValue("address"),
+      city: getValue("city"),
+      email: getValue("email")
+    },
+    productID: getIdList(),
+  };
+  return order;
+}
+
+/* Fonction d'écoute de l'événement sur le formulaire */
+
+function formListener() {
+  let form = document.getElementsByClassName("cart__order__form");
+  form[0].addEventListener("submit", function (e) {
+    if (validFirstName() && validLastName() && validAddress() && validCity() && validEmail()) {
+      e.preventDefault();
+      let orderInfo = order();
+      console.log(orderInfo);
+      fetch("http://localhost:3000/api/products/order", {
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(orderInfo)
+      })
+        .then(function (response) {
+          if (response.ok) {
+            return response.json()
+          }
+        })
+        .then(function (value) {
+          /* localStorage.clear() */
+          /* document.location.href = `./confirmation.html?commande=${value.orderId}`; */
+          console.log(value.orderId);
+        })
+        .catch(function (err) {
+          console.log(err.message);
+        })
+    }
+    /* let contact = new Contact(getValue("firstName"), getValue("lastName"), getValue("address"), getValue("city"), getValue("email")); */
+    /* window.location.href = "./confirmation.html"; */
+  });
+}
+
 /* Classes */
+
+/* Classe de création d'un objet contact */
 
 class Contact {
   constructor(firstName, name, adress, town, mail) {
@@ -209,7 +383,8 @@ class Contact {
 }
 
 /* Appel API */
-fetch("http://localhost:3000/api/products/")
+function main () {
+  fetch("http://localhost:3000/api/products/")
   .then(function (res) {
     if (res.ok) {
       return res.json();
@@ -226,7 +401,19 @@ fetch("http://localhost:3000/api/products/")
   .then(function () {
     displayTotal();
     displayPrice();
+    formEvent("firstName", validFirstName);
+    formEvent("lastName", validLastName);
+    formEvent("address", validAddress);
+    formEvent("city", validCity);
+    formEvent("email", validEmail);
   })
+/*   .then(function () {
+    formListener();
+  }) */
   .catch(function (err) {
     console.error(err);
   });
+}
+
+main();
+formListener();

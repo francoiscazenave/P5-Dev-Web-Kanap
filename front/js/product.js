@@ -115,11 +115,15 @@ function saveCart(cart) {
 /* Fonction de récupération du LocalStorage */
 
 function getCart() {
-  let cart = localStorage.getItem("cart");
-  if (cart == null) {
-    return [];
+  if (typeof (Storage) !== "undefined") {
+    let cart = localStorage.getItem("cart");
+    if (cart == null) {
+      return [];
+    } else {
+      return JSON.parse(cart);
+    }
   } else {
-    return JSON.parse(cart);
+    alert("You're Browser don't support LocalStorage Javascript API.");
   }
 }
 
@@ -139,6 +143,8 @@ function addCart() {
     cart.push(product);
   }
   saveCart(cart);
+  alert("Canapé ajouté au panier");
+  setTimeout((document.location.href = './index.html'), 10000);
 }
 
 /* Appel API */
@@ -152,7 +158,6 @@ fetch(apiUrl)
   .then(function (value) {
     productCard(value);
   })
-
   .catch(function (err) {
     console.error(err);
   });
@@ -173,18 +178,3 @@ document.addEventListener('DOMContentLoaded', function () {
 
 let button = document.getElementById("addToCart");
 button.addEventListener('click', addCart);
-
-/* console.log(getCart()); */
-
-if (typeof (Storage) !== "undefined") {
-  console.log("Storage OK");
-  for (let element in Storage) {
-    console.log(element);
-  }
-} else {
-  console.log("You're Browser don't support LocalStorage Javascript API.");
-}
-
-/* if (getCartCheck() !== null) {
-  cart.push(getCartCheck());
-} */
