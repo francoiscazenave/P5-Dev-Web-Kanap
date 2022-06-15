@@ -327,9 +327,19 @@ function order() {
       city: getValue("city"),
       email: getValue("email")
     },
-    productID: getIdList(),
+    /* productID: getIdList(), */
   };
   return order;
+}
+
+function contact() {
+  return {
+    firstName: getValue("firstName"),
+    lastName: getValue("lastName"),
+    address: getValue("address"),
+    city: getValue("city"),
+    email: getValue("email")
+  }
 }
 
 /* Fonction d'écoute de l'événement sur le formulaire */
@@ -340,7 +350,12 @@ function formListener() {
     if (validFirstName() && validLastName() && validAddress() && validCity() && validEmail()) {
       e.preventDefault();
       let orderInfo = order();
+      let orderId = getIdList();
+      let orderIds = {
+        productId : orderId
+      }
       console.log(orderInfo);
+      console.log(orderId);
       fetch("http://localhost:3000/api/products/order", {
         method: "POST",
         headers: {
@@ -383,37 +398,37 @@ class Contact {
 }
 
 /* Appel API */
-function main () {
+function main() {
   fetch("http://localhost:3000/api/products/")
-  .then(function (res) {
-    if (res.ok) {
-      return res.json();
-    }
-  })
-  .then(function (value) {
-    return products = value;
-  })
-  .then(function () {
-    userCart();
-    DeleteEvent();
-    ModifQuantityEvent();
-  })
-  .then(function () {
-    displayTotal();
-    displayPrice();
-    formEvent("firstName", validFirstName);
-    formEvent("lastName", validLastName);
-    formEvent("address", validAddress);
-    formEvent("city", validCity);
-    formEvent("email", validEmail);
-  })
-/*   .then(function () {
-    formListener();
-  }) */
-  .catch(function (err) {
-    console.error(err);
-  });
+    .then(function (res) {
+      if (res.ok) {
+        return res.json();
+      }
+    })
+    .then(function (value) {
+      return products = value;
+    })
+    .then(function () {
+      userCart();
+      DeleteEvent();
+      ModifQuantityEvent();
+    })
+    .then(function () {
+      displayTotal();
+      displayPrice();
+      formEvent("firstName", validFirstName);
+      formEvent("lastName", validLastName);
+      formEvent("address", validAddress);
+      formEvent("city", validCity);
+      formEvent("email", validEmail);
+    })
+    .then(function () {
+      formListener();
+    })
+    .catch(function (err) {
+      console.error(err);
+    });
 }
 
 main();
-formListener();
+/* formListener(); */
