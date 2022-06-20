@@ -97,12 +97,17 @@ function errorMessage(erreur) {
 /* Fonction de vérification du choix de la couleur et de la quantité */
 
 function checkUserInput() {
-  if (color === undefined && quantity === undefined) {
+  if (color === null && quantity === null) {
     errorMessage("Vous n'avez pas sélectionner de couleurs ni de quantité.");
-  } else if (color === undefined) {
+    return false;
+  } else if (color === null) {
     errorMessage("Choisir une couleur avant de valider");
-  } else if (quantity === undefined) {
+    return false;
+  } else if (quantity === null) {
     errorMessage("Choisir une quantité");
+    return false;
+  } else {
+    return true;
   }
 }
 
@@ -112,7 +117,8 @@ function saveCart(cart) {
   localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-/* Fonction de récupération du LocalStorage */
+/* Fonction qui crée un Array si le localStorage n'existe pas ou le récupère si il existe
+Et vérifie si le navigateur supporte le locaStorage */
 
 function getCart() {
   if (typeof (Storage) !== "undefined") {
@@ -138,6 +144,8 @@ function addCart() {
     quantityNum = parseInt(quantity, 10);
     duplicateIdQuantity += quantityNum;
     duplicateId.quantity = duplicateIdQuantity;
+  } else if (!checkUserInput()  ) {
+    return false;
   } else {
     let product = new Product(id, color, quantity);
     cart.push(product);
@@ -148,19 +156,23 @@ function addCart() {
 }
 
 /* Appel API */
+function main() {
+  fetch(apiUrl)
+    .then(function (res) {
+      if (res.ok) {
+        return res.json();
+      }
+    })
+    .then(function (value) {
+      productCard(value);
+    })
+    .catch(function (err) {
+      console.error(err);
+    });
+}
 
-fetch(apiUrl)
-  .then(function (res) {
-    if (res.ok) {
-      return res.json();
-    }
-  })
-  .then(function (value) {
-    productCard(value);
-  })
-  .catch(function (err) {
-    console.error(err);
-  });
+/* Appel de la fonction main */
+main();
 
 /* Ecoute du choix de la couleur */
 

@@ -8,16 +8,16 @@ let productsAPI = null;
 /* Classe de création d'un objet contact */
 
 class Contact {
-  constructor(firstName, name, adress, city, mail) {
+  constructor(firstName, name, adress, city, email) {
     this.firstName = firstName;
     this.lastName = name;
     this.address = adress;
     this.city = city;
-    this.email = mail;
+    this.email = email;
   }
 }
 
-/* Fonction de récupération du panier */
+/* Fonction de récupération du panier dans le LocalStorage */
 
 function getCart() {
   let cart = JSON.parse(localStorage.getItem("cart"));
@@ -324,7 +324,7 @@ function formEvent(element, event) {
   elementListen.addEventListener("input", event);
 }
 
-/* Fonction pour créer un tableau avec les id dans le panier */
+/* Fonction pour créer un tableau avec les id des produits dans le panier */
 
 function getIdList() {
   const cart = getCart();
@@ -335,43 +335,85 @@ function getIdList() {
   return idList;
 }
 
+/* Function pour vérifier que les Id existe */
+
+function equals(array) {
+  const idApi = [];
+  const idApiSame = [];
+
+  // recupération de tout les Ids de chaque produit depuis l'API
+  for (let item of productsAPI) {
+    idApi.push(item._id);
+  }
+
+  // Tout les ids présent dans le tableau fournis en arguments seront copié dans le tableau idApiSame
+  for (let item of array) {
+    idApiSame.push(idApi.find(element => element == item));
+  }
+
+  if ((array.length === idApiSame.length) && array.every((value, index) => value === idApiSame[index])) {
+    console.log("Vérification des ids OK");
+    return true;
+  } else {
+    console.log("Vérification des ids rejeté erreur !");
+    return false;
+  }
+}
+
+// Fonction pour vérifier si chaque élément d'un array est une chaîne de caractères
+function checkTypeId(array) {
+  for (let item in array) {
+    if (typeof item === "string") {
+      return true;
+    } else {
+      console.log(typeof item);
+      return false;
+    }
+  }
+}
+
 /* Fonction d'écoute de l'événement sur le formulaire */
 
-function formListener() {
+function formSubmit() {
   let form = document.getElementsByClassName("cart__order__form");
   form[0].addEventListener("submit", function (e) {
     if (validFirstName() && validLastName() && validAddress() && validCity() && validEmail()) {
       e.preventDefault();
       let contact = new Contact(getValue("firstName"), getValue("lastName"), getValue("address"), getValue("city"), getValue("email"));
       let products = getIdList();
-      let combined = {
-        contact,
-        products
+      if (checkTypeId(products) && equals(products)) {
+        let combined = {
+          contact,
+          products
+        }
+        // requête POST vers le back-end
+        fetch("http://localhost:3000/api/products/order", {
+          method: "POST",
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(combined)
+        })
+          .then(function (response) {
+            if (response.ok) {
+              return response.json()
+            }
+          })
+          .then(function (value) {
+            // Le panier dans le LocalStorage est supprimé
+            localStorage.clear()
+            document.location.href = `./confirmation.html?commande=${value.orderId}`;
+            /* console.log(value.orderId); */
+          })
+          .catch(function (err) {
+            console.log(err.message);
+          })
+      } else {
+        alert("Il y a un problème avec les ids de votre commande !");
       }
-      /* let products = new Products(getIdList()); */
-      console.log(contact);
-      console.log(products);
-      fetch("http://localhost:3000/api/products/order", {
-        method: "POST",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(combined)
-      })
-        .then(function (response) {
-          if (response.ok) {
-            return response.json()
-          }
-        })
-        .then(function (value) {
-          localStorage.clear()
-          document.location.href = `./confirmation.html?commande=${value.orderId}`;
-          /* console.log(value.orderId); */
-        })
-        .catch(function (err) {
-          console.log(err.message);
-        })
+    } else {
+      alert("Il y a un problème avec vos réponse au formulaire !");
     }
   });
 }
@@ -402,11 +444,12 @@ function main() {
       formEvent("email", validEmail);
     })
     .then(function () {
-      formListener();
+      formSubmit();
     })
     .catch(function (err) {
       console.error(err);
     });
 }
 
+/* Appel de la fonction main */
 main();

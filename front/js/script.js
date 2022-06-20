@@ -1,6 +1,6 @@
 
 /* fonction de création de fiche produit */
-const createItem = function (element) {
+function createItem(element) {
   let items = document.getElementById("items");
   let item = document.createElement("a");
   item.setAttribute("href", "./product.html?id=" + element._id);
@@ -22,7 +22,7 @@ const createItem = function (element) {
 }
 
 /* Message d'erreur si la base de donnée ne répond pas */
-const erreur = function () {
+function erreur() {
   let items = document.getElementById("items");
   let divMessage = document.createElement("div");
   items.appendChild(divMessage);
@@ -32,17 +32,23 @@ const erreur = function () {
 }
 
 /* Appel API */
-fetch("http://localhost:3000/api/products/")
-  .then(function (res) {
-    if (res.ok) {
-      return res.json();
-    }
-  })
-  .then(function (value) {
-    for (let tab of value) {
-      createItem(tab);
-    }
-  })
-  .catch(function (err) {
-    erreur();
-  });
+function main() {
+  fetch("http://localhost:3000/api/products/")
+    .then(function (res) {
+      if (res.ok) {
+        return res.json();
+      }
+    })
+    .then(function (value) {
+      for (let tab of value) {
+        createItem(tab);
+      }
+    })
+    .catch(function (err) {
+      erreur();
+    });
+}
+
+/* Appel de la fonction main */
+
+main();
