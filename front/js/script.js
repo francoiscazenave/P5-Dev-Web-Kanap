@@ -10,10 +10,10 @@ function createItem(element) {
   image.setAttribute("alt", element.altTxt);
   let titre = document.createElement("h3");
   titre.classList.add("productName");
-  titre.innerHTML = element.name;
+  titre.textContent = element.name;
   let paragraphe = document.createElement("p");
   paragraphe.classList.add("productDescription");
-  paragraphe.innerHTML = element.description;
+  paragraphe.textContent = element.description;
   article.appendChild(image);
   article.appendChild(titre);
   article.appendChild(paragraphe);
@@ -27,7 +27,7 @@ function erreur() {
   let divMessage = document.createElement("div");
   items.appendChild(divMessage);
   let message = document.createElement("p");
-  message.innerHTML = "La connexion à la base de donnée ne fonctionne pas.";
+  message.textContent = "La connexion à la base de donnée ne fonctionne pas.";
   divMessage.appendChild(message);
 }
 

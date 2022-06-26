@@ -58,13 +58,13 @@ function userCart() {
       let cartItemContentDescription = document.createElement("div");
       cartItemContentDescription.classList.add("cart__item__content__description");
       let titre = document.createElement("h2");
-      titre.innerText = apiResult['name'];
+      titre.textContent = apiResult['name'];
       cartItemContentDescription.appendChild(titre);
       let paragrapheDescription = document.createElement("p");
-      paragrapheDescription.innerText = item.color;
+      paragrapheDescription.textContent = item.color;
       cartItemContentDescription.appendChild(paragrapheDescription);
       let prix = document.createElement("p");
-      prix.innerText = apiResult['price'] + " €";
+      prix.textContent = apiResult['price'] + " €";
       cartItemContentDescription.appendChild(prix);
       cartItemContent.appendChild(cartItemContentDescription);
       display.appendChild(cartItemContent);
@@ -78,7 +78,7 @@ function userCart() {
       cartItemContentSettings.appendChild(cartItemContentSettingsQuantity);
 
       let cartItemContentSettingsParagraphe = document.createElement("p");
-      cartItemContentSettingsParagraphe.innerText = "Qté : ";
+      cartItemContentSettingsParagraphe.textContent = "Qté : ";
       cartItemContentSettingsQuantity.appendChild(cartItemContentSettingsParagraphe);
 
       let input = document.createElement("input");
@@ -96,7 +96,7 @@ function userCart() {
 
       let cartItemContentDeleteParagraphe = document.createElement("p");
       cartItemContentDeleteParagraphe.classList.add("deleteItem");
-      cartItemContentDeleteParagraphe.innerText = "Supprimer";
+      cartItemContentDeleteParagraphe.textContent = "Supprimer";
       cartItemContentDelete.appendChild(cartItemContentDeleteParagraphe);
     }
     /* Si le panier est vide */
@@ -105,7 +105,7 @@ function userCart() {
     let display = document.createElement("article");
     display.classList.add("cart__item");
     let emptyCart = document.createElement("p");
-    emptyCart.innerText = "Votre panier est vide";
+    emptyCart.textContent = "Votre panier est vide";
     display.appendChild(emptyCart);
     section.appendChild(display);
   }
@@ -185,7 +185,7 @@ function calcQuantity() {
 
 function displayTotal() {
   let totalQuantity = document.getElementById("totalQuantity");
-  totalQuantity.innerHTML = calcQuantity();
+  totalQuantity.textContent = calcQuantity();
 }
 
 /* Fonction de calcul du total des produits */
@@ -208,7 +208,7 @@ function calcTotal() {
 
 function displayPrice() {
   let totalPrice = document.getElementById("totalPrice");
-  totalPrice.innerText = calcTotal();
+  totalPrice.textContent = calcTotal();
 }
 
 /* Fonction pour récupérer la valeur des champs du formulaire */
@@ -224,15 +224,15 @@ function validFirstName() {
   const nameRegEx = new RegExp("^[a-zA-Z\-]{3,15}$", "g");
   let msgError = document.getElementById("firstNameErrorMsg");
   if (!firstName) {
-    msgError.innerText = "Vous devez remplir votre prénom";
+    msgError.textContent = "Vous devez remplir votre prénom";
     msgError.style.color = "red";
     return false;
   } else if (!nameRegEx.test(firstName)) {
-    msgError.innerText = "Ceci n'est pas un prénom valide";
+    msgError.textContent = "Ceci n'est pas un prénom valide";
     msgError.style.color = "red";
     return false;
   } else {
-    msgError.innerText = "";
+    msgError.textContent = "";
     return true;
   }
 }
@@ -244,15 +244,15 @@ function validLastName() {
   const nameRegEx = new RegExp("^[a-zA-Z\-]{2,25}$", "g");
   let msgError = document.getElementById("lastNameErrorMsg");
   if (!lastName) {
-    msgError.innerText = "Vous devez remplir votre nom";
+    msgError.textContent = "Vous devez remplir votre nom";
     msgError.style.color = "red";
     return false;
   } else if (!nameRegEx.test(lastName)) {
-    msgError.innerText = "Ceci n'est pas un nom valide";
+    msgError.textContent = "Ceci n'est pas un nom valide";
     msgError.style.color = "red";
     return false;
   } else {
-    msgError.innerText = "";
+    msgError.textContent = "";
     return true;
   }
 }
@@ -264,15 +264,15 @@ function validAddress() {
   const addressRegEx = new RegExp("^[a-zA-Z0-9\s ,.'-]{3,}$", "g");
   let msgError = document.getElementById("addressErrorMsg");
   if (!address) {
-    msgError.innerText = "Vous devez remplir votre adresse";
+    msgError.textContent = "Vous devez remplir votre adresse";
     msgError.style.color = "red";
     return false;
   } else if (!addressRegEx.test(address)) {
-    msgError.innerText = "Ceci n'est pas une adresse valide";
+    msgError.textContent = "Ceci n'est pas une adresse valide";
     msgError.style.color = "red";
     return false;
   } else {
-    msgError.innerText = "";
+    msgError.textContent = "";
     return true;
   }
 }
@@ -284,15 +284,15 @@ function validCity() {
   let cityRegEx = new RegExp("^[a-zA-Z\-]{2,}$", "g");
   let msgError = document.getElementById("cityErrorMsg");
   if (!city) {
-    msgError.innerText = "Vous devez remplir votre ville";
+    msgError.textContent = "Vous devez remplir votre ville";
     msgError.style.color = "red";
     return false;
   } else if (!cityRegEx.test(city)) {
-    msgError.innerText = "Ceci n'est pas un nom de ville valide";
+    msgError.textContent = "Ceci n'est pas un nom de ville valide";
     msgError.style.color = "red";
     return false;
   } else {
-    msgError.innerText = "";
+    msgError.textContent = "";
     return true;
   }
 }
@@ -304,15 +304,15 @@ function validEmail() {
   let emailRegEx = new RegExp("^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$", "g");
   let msgError = document.getElementById("emailErrorMsg");
   if (!email) {
-    msgError.innerText = "Vous devez remplir l'email";
+    msgError.textContent = "Vous devez remplir l'email";
     msgError.style.color = "red";
     return false;
   } else if (!emailRegEx.test(email)) {
-    msgError.innerText = "Ceci n'est pas un mail valide";
+    msgError.textContent = "Ceci n'est pas un mail valide";
     msgError.style.color = "red";
     return false;
   } else {
-    msgError.innerText = "";
+    msgError.textContent = "";
     return true;
   }
 }
@@ -350,7 +350,7 @@ function equals(array) {
   for (let item of array) {
     idApiSame.push(idApi.find(element => element == item));
   }
-
+  // Vérificaiton que les deux tableaux ont la même longueur et les même éléments
   if ((array.length === idApiSame.length) && array.every((value, index) => value === idApiSame[index])) {
     console.log("Vérification des ids OK");
     return true;
@@ -360,7 +360,7 @@ function equals(array) {
   }
 }
 
-// Fonction pour vérifier si chaque élément d'un array est une chaîne de caractères
+// Fonction pour vérifier si chaque élément d'un array est de types chaîne de caractères
 function checkTypeId(array) {
   for (let item in array) {
     if (typeof item === "string") {
@@ -372,7 +372,7 @@ function checkTypeId(array) {
   }
 }
 
-/* Fonction d'écoute de l'événement sur le formulaire */
+/* Fonction de soumissions du formulaire */
 
 function formSubmit() {
   let form = document.getElementsByClassName("cart__order__form");

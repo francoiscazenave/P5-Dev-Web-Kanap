@@ -33,21 +33,21 @@ function createImg(value) {
 
 function createTitle(value) {
   let title = document.getElementById("title");
-  title.innerHTML = value.name;
+  title.textContent = value.name;
 }
 
 /* Fonction d'affichage du prix produit */
 
 function showPrice(value) {
   let price = document.getElementById("price");
-  price.innerHTML = value.price;
+  price.textContent = value.price;
 }
 
 /* Fonction d'affichage de la description du produit */
 
 function showDescription(value) {
   let description = document.getElementById("description");
-  description.innerHTML = value.description;
+  description.textContent = value.description;
 }
 
 /* Fonction d'affichage du choix des couleurs */
@@ -57,7 +57,7 @@ function showColor(value) {
   for (let color of value.colors) {
     let option = document.createElement("option");
     option.setAttribute("value", color)
-    option.innerHTML = color;
+    option.textContent = color;
     colors.appendChild(option);
   }
 }
@@ -90,7 +90,7 @@ function errorMessage(erreur) {
   /* let conteneur = document.getElementsByClassName("item__content__settings__color");
   let messageErreur = document.createElement("p");
   conteneur.appendChild(messageErreur);
-  messageErreur.innerHTML = erreur; */
+  messageErreur.textContent = erreur; */
   alert(erreur);
 }
 
